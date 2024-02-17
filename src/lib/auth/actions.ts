@@ -169,9 +169,11 @@ export async function resendVerificationEmail(): Promise<{
   if (!user) {
     return redirect(redirects.toLogin);
   }
-  const lastSent = await db.query.emailVerificationCodes.findFirst({
-    where: (table, { eq }) => eq(table.userId, user.id),
-    columns: { expiresAt: true },
+  const lastSent = await prisma.emailVerificationCode.findFirst({
+    where: {
+      userId: user.id,
+    },
+    select: { expiresAt: true },
   });
 
   if (lastSent && isWithinExpirationDate(lastSent.expiresAt)) {
@@ -253,8 +255,8 @@ export async function sendPasswordResetLink(
     return { error: "Provided email is invalid." };
   }
   try {
-    const user = await db.query.users.findFirst({
-      where: (table, { eq }) => eq(table.email, parsed.data),
+    const user = await prisma.user.findFirst({
+      where: { email: parsed.data },
     });
 
     if (!user || !user.emailVerified)
@@ -292,17 +294,16 @@ export async function resetPassword(
   }
   const { token, password } = parsed.data;
 
-  const dbToken = await db.transaction(async (tx) => {
-    const item = await tx.query.passwordResetTokens.findFirst({
-      where: (table, { eq }) => eq(table.id, token),
-    });
-    if (item) {
-      await tx
-        .delete(passwordResetTokens)
-        .where(eq(passwordResetTokens.id, item.id));
-    }
-    return item;
+  const dbToken = await prisma.passwordResetToken.findFirst({
+    where: { id: token },
   });
+  if (dbToken) {
+    await prisma.passwordResetToken.delete({
+      where: {
+        id: dbToken.id,
+      },
+    });
+  }
 
   if (!dbToken) return { error: "Invalid password reset link" };
 
@@ -311,10 +312,13 @@ export async function resetPassword(
 
   await lucia.invalidateUserSessions(dbToken.userId);
   const hashedPassword = await new Scrypt().hash(password);
-  await db
-    .update(users)
-    .set({ hashedPassword })
-    .where(eq(users.id, dbToken.userId));
+  await prisma.user.update({
+    data: {
+      hashedPassword,
+    },
+    where: { id: dbToken.userId },
+  });
+
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
@@ -358,14 +362,18 @@ async function generateEmailVerificationCode(
 }
 
 async function generatePasswordResetToken(userId: string): Promise<string> {
-  await db
-    .delete(passwordResetTokens)
-    .where(eq(passwordResetTokens.userId, userId));
+  await prisma.passwordResetToken.delete({
+    where: {
+      userId,
+    },
+  });
   const tokenId = generateId(40);
-  await db.insert(passwordResetTokens).values({
-    id: tokenId,
-    userId,
-    expiresAt: createDate(new TimeSpan(2, "h")),
+  await prisma.passwordResetToken.create({
+    data: {
+      id: tokenId,
+      userId,
+      expiresAt: createDate(new TimeSpan(2, "h")),
+    },
   });
   return tokenId;
 }

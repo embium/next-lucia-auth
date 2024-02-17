@@ -14,14 +14,18 @@ model emailVerificationCode {
   code       String   @db.VarChar(8)
   expiresAt DateTime @db.DateTime(0)
 
+  user   User @relation(fields: [userId], references: [id])
+
   @@index([email], map: "email_idx")
   @@index([userId], map: "user_idx")
 }
 
 model passwordResetToken {
   id         String   @id @db.VarChar(40)
-  userId    String   @db.VarChar(21)
+  userId    String   @db.VarChar(21) @unique
   expiresAt DateTime @db.DateTime(0)
+
+  user   User @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "user_idx")
 }
@@ -38,7 +42,7 @@ model Post {
   updatedAt DateTime? @db.Timestamp(0)
 
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
-  
+
   @@index([createdAt], map: "post_created_at_idx")
   @@index([userId], map: "user_idx")
 }
@@ -64,6 +68,8 @@ model User {
 
   sessions Session[]
   posts Post[]
+  passwordResetToken passwordResetToken?
+  emailVerificationToken emailVerificationCode?
 
   @@index([email], map: "email_idx")
 
