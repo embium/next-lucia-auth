@@ -7,25 +7,19 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z
+    DATABASE_HOST: z
       .string()
-      .url()
       .refine(
         (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
         "You forgot to change the default URL",
       ),
+    DATABASE_USERNAME: z.string(),
+    DATABASE_PASSWORD: z.string(),
+    DATABASE_URL: z.string(),
+    RESEND_API_KEY: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    DISCORD_CLIENT_ID: z.string().trim().min(1),
-    DISCORD_CLIENT_SECRET: z.string().trim().min(1),
-    SMTP_HOST: z.string().trim().min(1),
-    SMTP_PORT: z.number().int().min(1),
-    SMTP_USER: z.string().trim().min(1),
-    SMTP_PASSWORD: z.string().trim().min(1),
-    STRIPE_API_KEY: z.string().trim().min(1),
-    STRIPE_WEBHOOK_SECRET: z.string().trim().min(1),
-    STRIPE_PRO_MONTHLY_PLAN_ID: z.string().trim().min(1),
   },
 
   /**
@@ -44,17 +38,12 @@ export const env = createEnv({
    */
   runtimeEnv: {
     // Server-side env vars
+    DATABASE_HOST: process.env.DATABASE_HOST,
+    DATABASE_USERNAME: process.env.DATABASE_USERNAME,
+    DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     DATABASE_URL: process.env.DATABASE_URL,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
-    SMTP_HOST: process.env.SMTP_HOST,
-    SMTP_PORT: parseInt(process.env.SMTP_PORT ?? ""),
-    SMTP_USER: process.env.SMTP_USER,
-    SMTP_PASSWORD: process.env.SMTP_PASSWORD,
-    DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
-    DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
-    STRIPE_API_KEY: process.env.STRIPE_API_KEY,
-    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
-    STRIPE_PRO_MONTHLY_PLAN_ID: process.env.STRIPE_PRO_MONTHLY_PLAN_ID,
     // Client-side env vars
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },

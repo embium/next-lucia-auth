@@ -13,7 +13,6 @@ import {
   ShadcnUi,
   TRPC,
   TailwindCss,
-  StripeLogo,
   ReactEmail,
 } from "./_components/feature-icons";
 import {
@@ -59,11 +58,6 @@ const features = [
     logo: TRPC,
   },
   {
-    name: "Subscription",
-    description: "Subscription with stripe",
-    logo: StripeLogo,
-  },
-  {
     name: "Tailwindcss",
     description: "Simple and elegant UI components built with Tailwind CSS",
     logo: TailwindCss,
@@ -93,10 +87,10 @@ const HomePage = () => {
           <h1 className="text-balance text-center text-3xl font-bold md:text-4xl lg:text-5xl">
             Next.js Lucia Auth Starter Template
           </h1>
-          <p className="text-balance mb-10 mt-4 text-center text-muted-foreground md:text-lg lg:text-xl">
+          <p className="mb-10 mt-4 text-balance text-center text-muted-foreground md:text-lg lg:text-xl">
             A Next.js Authentication starter template (password reset, email
-            validation and oAuth). Includes Lucia, Drizzle, tRPC, Stripe,
-            tailwindcss, shadcn-ui and react-email.
+            validation and oAuth). Includes Lucia, Drizzle, tRPC, tailwindcss,
+            shadcn-ui and react-email.
           </p>
           <div className="mb-10">
             <div className="mx-auto max-w-[430px]">
@@ -121,7 +115,7 @@ const HomePage = () => {
           <h1 className="mb-4 text-center text-3xl font-bold md:text-4xl lg:text-5xl">
             <a id="features"></a> Features
           </h1>
-          <p className="text-balance mb-10 text-center text-muted-foreground md:text-lg lg:text-xl">
+          <p className="mb-10 text-balance text-center text-muted-foreground md:text-lg lg:text-xl">
             This starter template is a guide to help you get started with
             Next.js for large scale applications. Feel free to add or remove
             features to suit your needs.

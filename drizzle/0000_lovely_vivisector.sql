@@ -42,14 +42,9 @@ CREATE TABLE `acme_v3_users` (
 	`email_verified` boolean NOT NULL DEFAULT false,
 	`hashed_password` varchar(255),
 	`avatar` varchar(255),
-	`stripe_subscription_id` varchar(191),
-	`stripe_price_id` varchar(191),
-	`stripe_customer_id` varchar(191),
-	`stripe_current_period_end` timestamp,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `acme_v3_users_id` PRIMARY KEY(`id`),
-	CONSTRAINT `acme_v3_users_discord_id_unique` UNIQUE(`discord_id`),
 	CONSTRAINT `acme_v3_users_email_unique` UNIQUE(`email`)
 );
 --> statement-breakpoint
@@ -59,5 +54,4 @@ CREATE INDEX `user_idx` ON `acme_v3_password_reset_tokens` (`user_id`);--> state
 CREATE INDEX `user_idx` ON `acme_v3_posts` (`user_id`);--> statement-breakpoint
 CREATE INDEX `post_created_at_idx` ON `acme_v3_posts` (`created_at`);--> statement-breakpoint
 CREATE INDEX `user_idx` ON `acme_v3_sessions` (`user_id`);--> statement-breakpoint
-CREATE INDEX `email_idx` ON `acme_v3_users` (`email`);--> statement-breakpoint
-CREATE INDEX `discord_idx` ON `acme_v3_users` (`discord_id`);
+CREATE INDEX `email_idx` ON `acme_v3_users` (`email`);

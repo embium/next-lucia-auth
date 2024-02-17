@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { type User } from "lucia";
 
 const routes = [
   { name: "Home", href: "/" },
@@ -19,7 +20,7 @@ const routes = [
   },
 ] as const;
 
-export const Header = () => {
+export const Header = ({ user }: { user: User | null }) => {
   return (
     <header className="px-2 py-4 lg:py-6">
       <div className="container flex items-center gap-2 p-0">
@@ -60,11 +61,19 @@ export const Header = () => {
             </Link>
           ))}
         </nav>
-        <div className="ml-auto">
-          <Button asChild variant={"secondary"}>
-            <Link href="/login">Login</Link>
-          </Button>
-        </div>
+        {user ? (
+          <div className="ml-auto">
+            <Button asChild variant={"secondary"}>
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="ml-auto">
+            <Button asChild variant={"secondary"}>
+              <Link href="/login">Login</Link>
+            </Button>
+          </div>
+        )}
       </div>
     </header>
   );

@@ -23,7 +23,7 @@ import {
   passwordResetTokens,
   users,
 } from "@/server/db/schema";
-import { sendMail } from "@/server/send-mail";
+import { sendEmail } from "@/server/send-mail";
 import { renderVerificationCodeEmail } from "@/lib/email-templates/email-verification";
 import { renderResetPasswordEmail } from "@/lib/email-templates/reset-password";
 import { validateRequest } from "@/lib/auth/validate-request";
@@ -108,7 +108,6 @@ export async function signup(
   }
 
   const { email, password } = parsed.data;
-
   const existingUser = await db.query.users.findFirst({
     where: (table, { eq }) => eq(table.email, email),
     columns: { email: true },
@@ -129,11 +128,14 @@ export async function signup(
   });
 
   const verificationCode = await generateEmailVerificationCode(userId, email);
-  await sendMail({
+
+  await sendEmail({
     to: email,
     subject: "Verify your account",
-    body: renderVerificationCodeEmail({ code: verificationCode }),
+    html: renderVerificationCodeEmail({ code: verificationCode }),
   });
+
+  console.log(verificationCode);
 
   const session = await lucia.createSession(userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
@@ -184,10 +186,10 @@ export async function resendVerificationEmail(): Promise<{
     user.id,
     user.email,
   );
-  await sendMail({
+  await sendEmail({
     to: user.email,
     subject: "Verify your account",
-    body: renderVerificationCodeEmail({ code: verificationCode }),
+    html: renderVerificationCodeEmail({ code: verificationCode }),
   });
 
   return { success: true };
@@ -262,10 +264,10 @@ export async function sendPasswordResetLink(
 
     const verificationLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password/${verificationToken}`;
 
-    await sendMail({
+    await sendEmail({
       to: user.email,
       subject: "Reset your password",
-      body: renderResetPasswordEmail({ link: verificationLink }),
+      html: renderResetPasswordEmail({ link: verificationLink }),
     });
 
     return { success: true };

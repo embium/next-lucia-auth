@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { DiscordLogoIcon } from "@/components/icons";
 import { APP_TITLE } from "@/lib/constants";
 import { Label } from "@/components/ui/label";
 import { signup } from "@/lib/auth/actions";
@@ -28,12 +27,6 @@ export function Signup() {
         <CardDescription>Sign up to start using the app</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button variant="outline" className="w-full" asChild>
-          <Link href="/login/discord">
-            <DiscordLogoIcon className="mr-2 h-5 w-5" />
-            Sign up with Discord
-          </Link>
-        </Button>
         <div className="my-2 flex items-center">
           <div className="flex-grow border-t border-muted" />
           <div className="mx-2 text-muted-foreground">or</div>

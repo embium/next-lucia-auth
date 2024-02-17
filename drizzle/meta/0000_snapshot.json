@@ -46,16 +46,12 @@
       "indexes": {
         "user_idx": {
           "name": "user_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         },
         "email_idx": {
           "name": "email_idx",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": false
         }
       },
@@ -63,17 +59,13 @@
       "compositePrimaryKeys": {
         "acme_v3_email_verification_codes_id": {
           "name": "acme_v3_email_verification_codes_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "acme_v3_email_verification_codes_user_id_unique": {
           "name": "acme_v3_email_verification_codes_user_id_unique",
-          "columns": [
-            "user_id"
-          ]
+          "columns": ["user_id"]
         }
       }
     },
@@ -105,9 +97,7 @@
       "indexes": {
         "user_idx": {
           "name": "user_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -115,9 +105,7 @@
       "compositePrimaryKeys": {
         "acme_v3_password_reset_tokens_id": {
           "name": "acme_v3_password_reset_tokens_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {}
@@ -195,16 +183,12 @@
       "indexes": {
         "user_idx": {
           "name": "user_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         },
         "post_created_at_idx": {
           "name": "post_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -212,9 +196,7 @@
       "compositePrimaryKeys": {
         "acme_v3_posts_id": {
           "name": "acme_v3_posts_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {}
@@ -247,9 +229,7 @@
       "indexes": {
         "user_idx": {
           "name": "user_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -257,9 +237,7 @@
       "compositePrimaryKeys": {
         "acme_v3_sessions_id": {
           "name": "acme_v3_sessions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {}
@@ -310,34 +288,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "stripe_subscription_id": {
-          "name": "stripe_subscription_id",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "stripe_price_id": {
-          "name": "stripe_price_id",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "stripe_customer_id": {
-          "name": "stripe_customer_id",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "stripe_current_period_end": {
-          "name": "stripe_current_period_end",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -358,16 +308,12 @@
       "indexes": {
         "email_idx": {
           "name": "email_idx",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": false
         },
         "discord_idx": {
           "name": "discord_idx",
-          "columns": [
-            "discord_id"
-          ],
+          "columns": ["discord_id"],
           "isUnique": false
         }
       },
@@ -375,23 +321,13 @@
       "compositePrimaryKeys": {
         "acme_v3_users_id": {
           "name": "acme_v3_users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
-        "acme_v3_users_discord_id_unique": {
-          "name": "acme_v3_users_discord_id_unique",
-          "columns": [
-            "discord_id"
-          ]
-        },
         "acme_v3_users_email_unique": {
           "name": "acme_v3_users_email_unique",
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       }
     }

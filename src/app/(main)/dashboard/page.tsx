@@ -30,10 +30,7 @@ export default async function DashboardPage({ searchParams }: Props) {
    * @see https://www.youtube.com/shorts/A7GGjutZxrs
    * @see https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-data-fetching
    */
-  const promises = Promise.all([
-    api.post.myPosts.query({ page }),
-    api.stripe.getPlan.query(),
-  ]);
+  const promises = Promise.all([api.post.myPosts.query({ page })]);
 
   return (
     <div className="py-10 md:py-8">

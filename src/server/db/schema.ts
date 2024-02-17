@@ -14,21 +14,15 @@ export const users = mysqlTable(
   "users",
   {
     id: varchar("id", { length: 21 }).primaryKey(),
-    discordId: varchar("discord_id", { length: 255 }).unique(),
     email: varchar("email", { length: 255 }).unique().notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
     hashedPassword: varchar("hashed_password", { length: 255 }),
     avatar: varchar("avatar", { length: 255 }),
-    stripeSubscriptionId: varchar("stripe_subscription_id", { length: 191 }),
-    stripePriceId: varchar("stripe_price_id", { length: 191 }),
-    stripeCustomerId: varchar("stripe_customer_id", { length: 191 }),
-    stripeCurrentPeriodEnd: timestamp("stripe_current_period_end"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").onUpdateNow(),
   },
   (t) => ({
     emailIdx: index("email_idx").on(t.email),
-    discordIdx: index("discord_idx").on(t.discordId),
   }),
 );
 
