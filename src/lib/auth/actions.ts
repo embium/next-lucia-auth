@@ -10,7 +10,7 @@ import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { eq } from "drizzle-orm";
 import { lucia } from "@/lib/auth";
-import { db } from "@/server/db";
+import prisma from "@/server/db";
 import {
   loginSchema,
   signupSchema,
@@ -18,11 +18,6 @@ import {
   type SignupInput,
   resetPasswordSchema,
 } from "@/lib/validators/auth";
-import {
-  emailVerificationCodes,
-  passwordResetTokens,
-  users,
-} from "@/server/db/schema";
 import { sendEmail } from "@/server/send-mail";
 import { renderVerificationCodeEmail } from "@/lib/email-templates/email-verification";
 import { renderResetPasswordEmail } from "@/lib/email-templates/reset-password";
@@ -54,8 +49,8 @@ export async function login(
 
   const { email, password } = parsed.data;
 
-  const existingUser = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.email, email),
+  const existingUser = await prisma.user.findFirst({
+    where: { email },
   });
 
   if (!existingUser) {
@@ -108,9 +103,9 @@ export async function signup(
   }
 
   const { email, password } = parsed.data;
-  const existingUser = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.email, email),
-    columns: { email: true },
+  const existingUser = await prisma.user.findFirst({
+    where: { email },
+    select: { email: true },
   });
 
   if (existingUser) {
@@ -121,10 +116,12 @@ export async function signup(
 
   const userId = generateId(21);
   const hashedPassword = await new Scrypt().hash(password);
-  await db.insert(users).values({
-    id: userId,
-    email,
-    hashedPassword,
+  await prisma.user.create({
+    data: {
+      id: userId,
+      email,
+      hashedPassword: hashedPassword,
+    },
   });
 
   const verificationCode = await generateEmailVerificationCode(userId, email);
@@ -208,17 +205,20 @@ export async function verifyEmail(
     return redirect(redirects.toLogin);
   }
 
-  const dbCode = await db.transaction(async (tx) => {
-    const item = await tx.query.emailVerificationCodes.findFirst({
-      where: (table, { eq }) => eq(table.userId, user.id),
-    });
-    if (item) {
-      await tx
-        .delete(emailVerificationCodes)
-        .where(eq(emailVerificationCodes.id, item.id));
-    }
-    return item;
+  const dbCode = await prisma.emailVerificationCode.findFirst({
+    where: {
+      userId: user.id,
+      code,
+    },
   });
+
+  if (dbCode) {
+    await prisma.emailVerificationCode.delete({
+      where: {
+        id: dbCode.id,
+      },
+    });
+  }
 
   if (!dbCode || dbCode.code !== code)
     return { error: "Invalid verification code" };
@@ -229,10 +229,10 @@ export async function verifyEmail(
   if (dbCode.email !== user.email) return { error: "Email does not match" };
 
   await lucia.invalidateUserSessions(user.id);
-  await db
-    .update(users)
-    .set({ emailVerified: true })
-    .where(eq(users.id, user.id));
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { emailVerified: true },
+  });
   const session = await lucia.createSession(user.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
@@ -337,15 +337,22 @@ async function generateEmailVerificationCode(
   userId: string,
   email: string,
 ): Promise<string> {
-  await db
-    .delete(emailVerificationCodes)
-    .where(eq(emailVerificationCodes.userId, userId));
+  try {
+    await prisma.emailVerificationCode.delete({
+      where: { userId: userId },
+    });
+  } catch {
+    null;
+  }
+
   const code = generateRandomString(8, alphabet("0-9")); // 8 digit code
-  await db.insert(emailVerificationCodes).values({
-    userId,
-    email,
-    code,
-    expiresAt: createDate(new TimeSpan(10, "m")), // 10 minutes
+  await prisma.emailVerificationCode.create({
+    data: {
+      userId,
+      email,
+      code,
+      expiresAt: createDate(new TimeSpan(10, "m")),
+    },
   });
   return code;
 }

@@ -1,10 +1,11 @@
 import { Lucia, TimeSpan } from "lucia";
-import { DrizzleMySQLAdapter } from "@lucia-auth/adapter-drizzle";
-import { env } from "@/env.js";
-import { db } from "@/server/db";
-import { sessions, users, type User as DbUser } from "@/server/db/schema";
+import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 
-const adapter = new DrizzleMySQLAdapter(db, sessions, users);
+import { env } from "@/env.js";
+import prisma from "@/server/db";
+import { type User } from "@prisma/client";
+
+const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
 export const lucia = new Lucia(adapter, {
   getSessionAttributes: (/* attributes */) => {
@@ -40,4 +41,4 @@ declare module "lucia" {
 }
 
 interface DatabaseSessionAttributes {}
-interface DatabaseUserAttributes extends Omit<DbUser, "hashedPassword"> {}
+interface DatabaseUserAttributes extends Omit<User, "hashedPassword"> {}

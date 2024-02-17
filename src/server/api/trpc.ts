@@ -8,7 +8,7 @@
  */
 
 import { uncachedValidateRequest } from "@/lib/auth/validate-request";
-import { db } from "@/server/db";
+import prisma from "@/server/db";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
@@ -30,7 +30,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   return {
     session,
     user,
-    db,
+    prisma,
     headers: opts.headers,
   };
 };

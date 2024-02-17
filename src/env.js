@@ -7,14 +7,6 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_HOST: z
-      .string()
-      .refine(
-        (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
-        "You forgot to change the default URL",
-      ),
-    DATABASE_USERNAME: z.string(),
-    DATABASE_PASSWORD: z.string(),
     DATABASE_URL: z.string(),
     RESEND_API_KEY: z.string(),
     NODE_ENV: z
@@ -38,9 +30,6 @@ export const env = createEnv({
    */
   runtimeEnv: {
     // Server-side env vars
-    DATABASE_HOST: process.env.DATABASE_HOST,
-    DATABASE_USERNAME: process.env.DATABASE_USERNAME,
-    DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     DATABASE_URL: process.env.DATABASE_URL,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
