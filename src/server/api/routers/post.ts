@@ -117,4 +117,11 @@ export const postRouter = createTRPCRouter({
         },
       }),
     ),
+  myPostsCount: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.post.count({
+      where: {
+        userId: ctx.user.id,
+      },
+    });
+  }),
 });

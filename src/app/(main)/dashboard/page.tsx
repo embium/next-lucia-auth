@@ -35,15 +35,15 @@ export default function DashboardPage({ searchParams }: Props) {
    * @see https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-data-fetching
    */
   const posts = api.post.myPosts.useQuery({ skip, limit });
+  const totalPosts = api.post.myPostsCount.useQuery();
 
-  if (posts.isLoading) {
+  if (posts.isLoading || totalPosts.isLoading) {
     return <p>Loading...</p>;
   }
 
-  const totalPosts = posts.data?.length ?? 0;
-  const defaultLimit = limit ?? 11;
+  const defaultLimit = limit ?? 12;
   const defaultSkip = skip ?? 0;
-  const totalPages = Math.ceil(totalPosts / defaultLimit);
+  const totalPages = Math.ceil(Number(totalPosts.data) / defaultLimit);
   const currentPage = Math.floor(defaultSkip / defaultLimit) + 1;
   const maxPages = 7;
   const halfMaxPages = Math.floor(maxPages / 2);
@@ -70,7 +70,7 @@ export default function DashboardPage({ searchParams }: Props) {
   }
 
   const canPageBackwards = defaultSkip > 0;
-  const canPageForwards = defaultSkip + defaultLimit < totalPosts;
+  const canPageForwards = defaultSkip + defaultLimit < Number(totalPosts.data);
 
   return (
     <div className="py-10 md:py-8">
