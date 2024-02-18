@@ -115,6 +115,7 @@ export const postRouter = createTRPCRouter({
           status: true,
           createdAt: true,
         },
+        orderBy: { createdAt: "desc" },
       }),
     ),
   myPostsCount: protectedProcedure.query(({ ctx }) => {
