@@ -108,13 +108,6 @@ export const postRouter = createTRPCRouter({
         where: {
           userId: ctx.user.id,
         },
-        select: {
-          id: true,
-          title: true,
-          excerpt: true,
-          status: true,
-          createdAt: true,
-        },
         orderBy: { createdAt: "desc" },
       }),
     ),

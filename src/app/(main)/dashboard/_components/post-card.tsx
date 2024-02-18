@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { api } from "@/trpc/react";
-import { type RouterOutputs } from "@/trpc/shared";
 import { type Post } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

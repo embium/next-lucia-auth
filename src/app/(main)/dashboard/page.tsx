@@ -37,6 +37,7 @@ export default async function DashboardPage({ searchParams }: Props) {
     skip: defaultSkip,
     limit: defaultLimit,
   });
+
   const totalPosts = await api.post.myPostsCount.query();
 
   const total = Number(totalPosts);
