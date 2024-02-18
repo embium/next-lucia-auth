@@ -18,6 +18,7 @@ export const Header = ({ user }: { user: User }) => {
         <UserDropdown
           email={user.email}
           avatar={user.avatar}
+          admin={user.role === "ADMIN"}
           className="ml-auto"
         />
       </div>

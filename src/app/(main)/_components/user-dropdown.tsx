@@ -31,10 +31,12 @@ import { toast } from "sonner";
 export const UserDropdown = ({
   email,
   avatar,
+  admin,
   className,
 }: {
   email: string;
   avatar?: string | null;
+  admin?: boolean;
   className?: string;
 }) => {
   return (
@@ -55,6 +57,14 @@ export const UserDropdown = ({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          {admin && (
+            <DropdownMenuItem
+              className="cursor-pointer text-muted-foreground"
+              asChild
+            >
+              <Link href="/admin">Admin</Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             className="cursor-pointer text-muted-foreground"
             asChild

@@ -13,13 +13,14 @@ import {
 } from "@/components/ui/card";
 import { api } from "@/trpc/react";
 import { type RouterOutputs } from "@/trpc/shared";
+import { type Post } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
 interface PostCardProps {
-  post: RouterOutputs["post"]["myPosts"][number];
+  post: Post;
   userName?: string;
 }
 
@@ -53,8 +54,8 @@ export const PostCard = ({ post, userName }: PostCardProps) => {
           size="icon"
           className="h-8 w-8 text-destructive"
           onClick={() => {
-            startDeleteTransition(async () => {
-              await postMutation.mutateAsync(
+            startDeleteTransition(() => {
+              postMutation.mutate(
                 { id: post.id },
                 {
                   onSuccess: () => {
