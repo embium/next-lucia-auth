@@ -3,21 +3,10 @@
 import * as React from "react";
 import { NewPost } from "./new-post";
 import { PostCard } from "./post-card";
+import { type Post } from "@prisma/client";
 
 interface PostsProps {
-  posts:
-    | {
-        id: string;
-        userId: string;
-        title: string;
-        excerpt: string;
-        content: string;
-        status: string;
-        tags: string | null;
-        createdAt: Date;
-        updatedAt: Date | null;
-      }[]
-    | undefined;
+  posts: Post[];
 }
 
 export function Posts({ posts }: PostsProps) {

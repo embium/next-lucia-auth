@@ -148,13 +148,7 @@ export default function UsersTable({ users }: { users: User[] }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const { mutate: deleteUsers, isLoading } = api.user.deleteMany.useMutation({
-    onSuccess: () => {
-      const rows = table.getSelectedRowModel().rows.map((row) => row.original);
-      setData(data.filter((item) => !rows.includes(item)));
-      toast.success("Deleted users");
-    },
-  });
+  const { mutate: deleteUsers, isLoading } = api.user.deleteMany.useMutation();
 
   const table = useReactTable({
     data,
@@ -183,6 +177,15 @@ export default function UsersTable({ users }: { users: User[] }) {
           id: row.id,
         };
       }),
+      {
+        onSuccess: () => {
+          const rows = table
+            .getSelectedRowModel()
+            .rows.map((row) => row.original);
+          setData(data.filter((item) => !rows.includes(item)));
+          toast.success("Deleted users");
+        },
+      },
     );
   };
 
@@ -190,7 +193,7 @@ export default function UsersTable({ users }: { users: User[] }) {
     <>
       <div className="flex items-center pb-2">
         <h1 className="text-lg font-semibold md:text-2xl">Users</h1>
-        <Link className="ml-auto" href="add">
+        <Link className="ml-auto" href="/admin/users/add">
           <Button>Add user</Button>
         </Link>
       </div>
