@@ -188,10 +188,10 @@ export default function UsersTable({ users }: { users: User[] }) {
 
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center pb-2">
         <h1 className="text-lg font-semibold md:text-2xl">Users</h1>
         <Link className="ml-auto" href="add">
-          <Button size="sm">Add user</Button>
+          <Button>Add user</Button>
         </Link>
       </div>
       <div className="rounded-lg border shadow-sm">
