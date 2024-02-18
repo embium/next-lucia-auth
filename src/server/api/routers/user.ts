@@ -21,6 +21,7 @@ export const userRouter = createTRPCRouter({
           createdAt: true,
           role: true,
         },
+        orderBy: { createdAt: "asc" },
       }),
     ),
   count: protectedProcedure.query(({ ctx }) => ctx.prisma.user.count()),
