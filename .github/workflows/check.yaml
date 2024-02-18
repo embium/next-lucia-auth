@@ -19,11 +19,11 @@ jobs:
           node-version: 20.x
           cache: "pnpm"
 
-      - name: Generate prisma
-        run: npx prisma generate
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Generate prisma
+        run: npx prisma generate
 
       - name: Type check and lint
         run: pnpm run typecheck && pnpm run lint
