@@ -263,6 +263,7 @@ export async function sendPasswordResetLink(
       return { error: "Provided email is invalid." };
 
     const verificationToken = await generatePasswordResetToken(user.id);
+    console.log(verificationToken);
 
     const verificationLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password/${verificationToken}`;
 
@@ -297,6 +298,7 @@ export async function resetPassword(
   const dbToken = await prisma.passwordResetToken.findFirst({
     where: { id: token },
   });
+
   if (dbToken) {
     await prisma.passwordResetToken.delete({
       where: {
@@ -341,12 +343,18 @@ async function generateEmailVerificationCode(
   userId: string,
   email: string,
 ): Promise<string> {
-  try {
+  const existingCode = await prisma.emailVerificationCode.findFirst({
+    where: {
+      userId: userId,
+    },
+  });
+
+  if (existingCode) {
     await prisma.emailVerificationCode.delete({
-      where: { userId: userId },
+      where: {
+        id: existingCode.id,
+      },
     });
-  } catch {
-    null;
   }
 
   const code = generateRandomString(8, alphabet("0-9")); // 8 digit code
@@ -362,11 +370,20 @@ async function generateEmailVerificationCode(
 }
 
 async function generatePasswordResetToken(userId: string): Promise<string> {
-  await prisma.passwordResetToken.delete({
+  const existingToken = await prisma.passwordResetToken.findFirst({
     where: {
-      userId,
+      userId: userId,
     },
   });
+
+  if (existingToken) {
+    await prisma.passwordResetToken.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+  }
+
   const tokenId = generateId(40);
   await prisma.passwordResetToken.create({
     data: {
