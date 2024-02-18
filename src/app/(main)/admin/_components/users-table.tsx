@@ -148,7 +148,13 @@ export default function UsersTable({ users }: { users: User[] }) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const mutation = api.user.deleteMany.useMutation();
+  const { mutate: deleteUsers, isLoading } = api.user.deleteMany.useMutation({
+    onSuccess: () => {
+      const rows = table.getSelectedRowModel().rows.map((row) => row.original);
+      setData(data.filter((item) => !rows.includes(item)));
+      toast.success("Deleted users");
+    },
+  });
 
   const table = useReactTable({
     data,
@@ -171,14 +177,13 @@ export default function UsersTable({ users }: { users: User[] }) {
 
   const handleDelete = async () => {
     const rows = table.getSelectedRowModel().rows.map((row) => row.original);
-    mutation.mutate(
+    deleteUsers(
       rows.map((row) => {
         return {
           id: row.id,
         };
       }),
     );
-    setData(data.filter((item) => !rows.includes(item)));
   };
 
   return (
@@ -196,7 +201,11 @@ export default function UsersTable({ users }: { users: User[] }) {
               table.getIsSomeRowsSelected()) && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="mr-2">
+                  <Button
+                    variant="destructive"
+                    className="mr-2"
+                    disabled={isLoading}
+                  >
                     Delete selected
                   </Button>
                 </AlertDialogTrigger>
