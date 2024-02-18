@@ -21,17 +21,9 @@ import { toast } from "sonner";
 interface PostCardProps {
   post: RouterOutputs["post"]["myPosts"][number];
   userName?: string;
-  setOptimisticPosts: (action: {
-    action: "add" | "delete" | "update";
-    post: RouterOutputs["post"]["myPosts"][number];
-  }) => void;
 }
 
-export const PostCard = ({
-  post,
-  userName,
-  setOptimisticPosts,
-}: PostCardProps) => {
+export const PostCard = ({ post, userName }: PostCardProps) => {
   const router = useRouter();
   const postMutation = api.post.delete.useMutation();
   const [isDeletePending, startDeleteTransition] = React.useTransition();
@@ -65,12 +57,6 @@ export const PostCard = ({
               await postMutation.mutateAsync(
                 { id: post.id },
                 {
-                  onSettled: () => {
-                    setOptimisticPosts({
-                      action: "delete",
-                      post,
-                    });
-                  },
                   onSuccess: () => {
                     toast.success("Post deleted");
                     router.refresh();

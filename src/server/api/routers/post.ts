@@ -15,7 +15,6 @@ export const postRouter = createTRPCRouter({
         skip: (input.page - 1) * input.perPage,
         take: input.perPage,
         where: {
-          userId: ctx.user.id,
           status: "published",
         },
         select: {
@@ -98,14 +97,14 @@ export const postRouter = createTRPCRouter({
   myPosts: protectedProcedure
     .input(
       z.object({
-        page: z.number().int().default(1),
-        perPage: z.number().int().default(12),
+        skip: z.number().int().default(1),
+        limit: z.number().int().default(12),
       }),
     )
     .query(({ ctx, input }) =>
       ctx.prisma.post.findMany({
-        skip: (input.page - 1) * input.perPage,
-        take: input.perPage,
+        skip: input.skip,
+        take: input.limit,
         where: {
           userId: ctx.user.id,
         },
