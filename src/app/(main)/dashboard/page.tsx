@@ -1,8 +1,4 @@
-"use client";
-
-import { env } from "@/env";
-import { api } from "@/trpc/react";
-import { type Metadata } from "next";
+import { api } from "@/trpc/server";
 import * as React from "react";
 import { z } from "zod";
 import { Posts } from "./_components/posts";
@@ -25,7 +21,7 @@ const schmea = z.object({
   limit: z.coerce.number().optional(),
 });
 
-export default function DashboardPage({ searchParams }: Props) {
+export default async function DashboardPage({ searchParams }: Props) {
   const { skip, limit } = schmea.parse(searchParams);
 
   /**
@@ -37,17 +33,13 @@ export default function DashboardPage({ searchParams }: Props) {
   const defaultLimit = limit ?? 11;
   const defaultSkip = skip ?? 0;
 
-  const posts = api.post.myPosts.useQuery({
+  const posts = await api.post.myPosts.query({
     skip: defaultSkip,
     limit: defaultLimit,
   });
-  const totalPosts = api.post.myPostsCount.useQuery();
+  const totalPosts = await api.post.myPostsCount.query();
 
-  if (posts.isLoading || totalPosts.isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  const total = Number(totalPosts.data);
+  const total = Number(totalPosts);
 
   const totalPages = Math.ceil(total / defaultLimit);
   const currentPage = Math.floor(defaultSkip / defaultLimit) + 1;
@@ -86,7 +78,7 @@ export default function DashboardPage({ searchParams }: Props) {
         <h1 className="text-3xl font-bold md:text-4xl">Posts</h1>
         <p className="text-sm text-muted-foreground">Manage your posts here</p>
       </div>
-      <Posts posts={posts.data} />
+      <Posts posts={posts} />
       <Pagination>
         <PaginationContent>
           {canPageBackwards && (

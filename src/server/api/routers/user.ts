@@ -5,14 +5,14 @@ export const userRouter = createTRPCRouter({
   list: protectedProcedure
     .input(
       z.object({
-        page: z.number().int().default(1),
-        perPage: z.number().int().default(12),
+        skip: z.number().int().default(1),
+        limit: z.number().int().default(100),
       }),
     )
     .query(({ ctx, input }) =>
       ctx.prisma.user.findMany({
-        skip: (input.page - 1) * input.perPage,
-        take: input.perPage,
+        skip: input.skip,
+        take: input.limit,
         select: {
           id: true,
           email: true,
@@ -23,6 +23,7 @@ export const userRouter = createTRPCRouter({
         },
       }),
     ),
+  count: protectedProcedure.query(({ ctx }) => ctx.prisma.user.count()),
   get: protectedProcedure.query(({ ctx }) => ctx.user),
   deleteMany: protectedProcedure
     .input(
