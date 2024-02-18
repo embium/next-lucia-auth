@@ -183,49 +183,6 @@ const LuciaAuth = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
 );
 LuciaAuth.displayName = "LuciaAuth";
 
-const Drizzle = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
-  ({ className, ...props }, ref) => (
-    <svg
-      ref={ref}
-      {...props}
-      viewBox="0 0 160 160"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      className={cn(className)}
-    >
-      <rect
-        width="9.63139"
-        height="40.8516"
-        rx="4.8157"
-        transform="matrix(0.873028 0.48767 -0.497212 0.867629 43.4805 67.3037)"
-        fill="currentColor"
-      ></rect>
-      <rect
-        width="9.63139"
-        height="40.8516"
-        rx="4.8157"
-        transform="matrix(0.873028 0.48767 -0.497212 0.867629 76.9395 46.5342)"
-        fill="currentColor"
-      ></rect>
-      <rect
-        width="9.63139"
-        height="40.8516"
-        rx="4.8157"
-        transform="matrix(0.873028 0.48767 -0.497212 0.867629 128.424 46.5352)"
-        fill="currentColor"
-      ></rect>
-      <rect
-        width="9.63139"
-        height="40.8516"
-        rx="4.8157"
-        transform="matrix(0.873028 0.48767 -0.497212 0.867629 94.957 67.3037)"
-        fill="currentColor"
-      ></rect>
-    </svg>
-  ),
-);
-Drizzle.displayName = "Drizzle";
-
 const TRPC = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
   ({ className, ...props }, ref) => (
     <svg
@@ -375,7 +332,6 @@ export {
   ReactJs,
   TailwindCss,
   LuciaAuth,
-  Drizzle,
   TRPC,
   ShadcnUi,
   ReactEmail,

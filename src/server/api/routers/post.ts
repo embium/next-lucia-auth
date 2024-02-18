@@ -12,7 +12,10 @@ export const postRouter = createTRPCRouter({
     )
     .query(({ ctx, input }) =>
       ctx.prisma.post.findMany({
+        skip: (input.page - 1) * input.perPage,
+        take: input.perPage,
         where: {
+          userId: ctx.user.id,
           status: "published",
         },
         select: {

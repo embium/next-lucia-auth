@@ -8,7 +8,6 @@ import { redirect } from "next/navigation";
 import { generateId, Scrypt } from "lucia";
 import { isWithinExpirationDate, TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
-import { eq } from "drizzle-orm";
 import { lucia } from "@/lib/auth";
 import prisma from "@/server/db";
 import {

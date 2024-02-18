@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { CopyToClipboard } from "./_components/copy-to-clipboard";
 import {
-  Drizzle,
   LuciaAuth,
   NextjsLight,
   NextjsDark,
@@ -46,11 +45,6 @@ const features = [
     description:
       "Credential authentication with password reset and email validation",
     logo: LuciaAuth,
-  },
-  {
-    name: "Database",
-    description: "Drizzle with planetscale mysql database",
-    logo: Drizzle,
   },
   {
     name: "TypeSafe Backend",
