@@ -1,6 +1,5 @@
-export const APP_TITLE = "Acme";
-export const DATABASE_PREFIX = "acme_v3";
-export const EMAIL_SENDER = '"Acme" <noreply@acme.com>';
+export const APP_TITLE = "Conspiray Expert";
+export const EMAIL_SENDER = '"Conspiracy Expert" <noreply@conspiracy-expert.online>';
 
 export const redirects = {
   toLogin: "/login",

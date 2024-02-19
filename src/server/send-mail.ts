@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { EMAIL_SENDER } from "@/lib/constants";
 import { z } from "zod";
 
 const resendErrorSchema = z.union([
@@ -34,7 +35,7 @@ export async function sendEmail({
   subject: string;
   html: string;
 }) {
-  const from = "hello@conspiracy-expert.online";
+  const from = EMAIL_SENDER;
 
   const email = {
     from,
