@@ -25,7 +25,8 @@ import { type User } from "@prisma/client";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CheckIcon } from "lucide-react";
+import { ArrowLeftIcon, CheckIcon } from "lucide-react";
+import Link from "next/link";
 
 interface Props {
   user: Omit<User, "hashedPassword">;
@@ -34,10 +35,11 @@ interface Props {
 const schema = z.object({
   email: z.string().email("Please enter a valid email"),
   emailVerified: z.boolean(),
-  password:  z
+  password: z
     .string()
     .min(8, "Password is too short. Minimum 8 characters required.")
-    .max(255).nullish(),
+    .max(255)
+    .nullish(),
   role: z.enum(["ADMIN", "USER"]),
   avatar: z.string().max(255).nullish(),
 });
@@ -45,7 +47,7 @@ const schema = z.object({
 export const EditUserForm = ({ user }: Props) => {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  const editUser = api.user.edit.useMutation();
+  const updateUser = api.admin.updateUser.useMutation();
   const form = useForm({
     defaultValues: {
       email: user.email,
@@ -58,13 +60,13 @@ export const EditUserForm = ({ user }: Props) => {
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
-    await editUser.mutateAsync(
+    await updateUser.mutateAsync(
       { ...values },
       {
         onSuccess: () => {
           toast.success("User updated");
           router.push("/admin");
-          router.refresh()
+          router.refresh();
         },
         onError: () => {
           toast.error("Failed to update user");
@@ -75,10 +77,16 @@ export const EditUserForm = ({ user }: Props) => {
 
   return (
     <>
+      <Link
+        href="/admin"
+        className="mb-3 flex items-center gap-2 text-sm text-muted-foreground hover:underline"
+      >
+        <ArrowLeftIcon className="h-5 w-5" /> back to admin
+      </Link>
       <div className="flex items-center gap-2">
         <LoadingButton
-          disabled={editUser.isLoading}
-          loading={editUser.isLoading}
+          disabled={updateUser.isLoading}
+          loading={updateUser.isLoading}
           onClick={() => formRef.current?.requestSubmit()}
           className="ml-auto"
         >

@@ -22,14 +22,15 @@ import { api } from "@/trpc/react";
 import { LoadingButton } from "@/components/loading-button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { CheckIcon } from "lucide-react";
+import { ArrowLeftIcon, CheckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { type UserRole } from "@prisma/client";
+import Link from "next/link";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email"),
-  password:  z
+  password: z
     .string()
     .min(8, "Password is too short. Minimum 8 characters required.")
     .max(255),
@@ -41,7 +42,7 @@ const schema = z.object({
 export const NewUser = () => {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  const createUser = api.user.create.useMutation();
+  const createUser = api.admin.createUser.useMutation();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -61,7 +62,7 @@ export const NewUser = () => {
           onSuccess: () => {
             toast.success("User created");
             router.push("/admin");
-            router.refresh()
+            router.refresh();
           },
         },
       );
@@ -72,6 +73,12 @@ export const NewUser = () => {
 
   return (
     <>
+      <Link
+        href="/admin"
+        className="mb-3 flex items-center gap-2 text-sm text-muted-foreground hover:underline"
+      >
+        <ArrowLeftIcon className="h-5 w-5" /> back to admin
+      </Link>
       <div className="flex items-center gap-2">
         <LoadingButton
           disabled={!form.formState.isDirty}

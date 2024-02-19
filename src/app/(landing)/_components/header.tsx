@@ -13,11 +13,7 @@ import { type User } from "lucia";
 
 const routes = [
   { name: "Home", href: "/" },
-  { name: "Features", href: "/#features" },
-  {
-    name: "Documentation",
-    href: "https://www.touha.dev/posts/simple-nextjs-t3-authentication-with-lucia",
-  },
+  { name: "Post Thread", href: "/editor/new" },
 ] as const;
 
 export const Header = ({ user }: { user: User | null }) => {

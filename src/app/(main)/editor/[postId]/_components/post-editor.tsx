@@ -52,12 +52,13 @@ export const PostEditor = ({ post }: Props) => {
       { id: post.id, ...values },
       {
         onSuccess: () => {
-         toast.success("Post updated successfully")
-       },
-       onError: () => {
-         toast.error("Failed to update post")
-       }
-      }); 
+          toast.success("Post updated successfully");
+        },
+        onError: () => {
+          toast.error("Failed to update post");
+        },
+      },
+    );
   });
 
   return (

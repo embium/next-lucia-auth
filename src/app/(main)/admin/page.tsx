@@ -31,7 +31,7 @@ export default async function Users({ searchParams }: Props) {
     limit: defaultLimit,
   });
 
-  const totalUsers = await api.user.count.query();
+  const totalUsers = await api.admin.countUsers.query();
   const total = Number(totalUsers);
 
   const totalPages = Math.ceil(total / defaultLimit);
