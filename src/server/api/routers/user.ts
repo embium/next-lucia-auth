@@ -44,12 +44,16 @@ export const userRouter = createTRPCRouter({
       z.object({
         email: z.string().email("Please enter a valid email"),
         password: z.string().min(1, "Please provide your password.").max(255),
+        avatar: z.string().max(255).nullish(),
+        emailVerified: z.boolean(),
+        role: z.enum(["ADMIN", "USER"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findUnique({
         where: { email: input.email },
       });
+
       if (user) {
         throw new TRPCError({
           message: "User already exists",
@@ -64,6 +68,9 @@ export const userRouter = createTRPCRouter({
           id: userId,
           email: input.email,
           hashedPassword,
+          avatar: input.avatar,
+          emailVerified: input.emailVerified,
+          role: input.role,
         },
       });
     }),
@@ -71,9 +78,9 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().email("Please enter a valid email"),
-        emailVerified: z.boolean(),
         password: z.string().max(255).nullish(),
         avatar: z.string().max(255).nullish(),
+        emailVerified: z.boolean(),
         role: z.enum(["ADMIN", "USER"]),
       }),
     )
