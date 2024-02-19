@@ -183,10 +183,7 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
   return (
     <>
       <div className="flex items-center pb-2">
-        <h1 className="text-lg font-semibold md:text-2xl">Users</h1>
-        <Link className="ml-auto" href="/admin/users/add">
-          <Button>Add post</Button>
-        </Link>
+        <h1 className="text-lg font-semibold md:text-2xl">Posts</h1>
       </div>
       <div className="rounded-lg border shadow-sm">
         <div className="container flex flex-col">
