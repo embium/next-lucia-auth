@@ -12,6 +12,11 @@ const items = [
     href: "/admin",
     icon: FileTextIcon,
   },
+  {
+    title: "Posts",
+    href: "/admin/posts",
+    icon: FileTextIcon,
+  },
 ];
 
 interface Props {
