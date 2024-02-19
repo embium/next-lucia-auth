@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -13,11 +13,11 @@ enum UserRole {
 }
 
 model User {
-  id             String    @id @db.VarChar(21)
-  email          String    @unique(map: "users_email_unique") @db.VarChar(255)
+  id             String    @id
+  email          String    @unique(map: "users_email_unique") 
   emailVerified  Boolean   @default(false)
-  hashedPassword String?   @db.VarChar(255)
-  avatar         String?   @db.VarChar(255)
+  hashedPassword String?   
+  avatar         String?   
   createdAt      DateTime  @default(dbgenerated("(now())")) @db.Timestamp(0)
   updatedAt      DateTime? @db.Timestamp(0)
 
@@ -28,55 +28,55 @@ model User {
   passwordResetToken     passwordResetToken?
   emailVerificationToken emailVerificationCode?
 
-  @@index([email], map: "email_idx")
+  @@index([email])
 }
 
 model Session {
-  id        String   @id @db.VarChar(255)
-  userId    String   @db.VarChar(21)
-  expiresAt DateTime @db.DateTime(0)
+  id        String   @id 
+  userId    String   
+  expiresAt DateTime @db.Timestamp(0)
 
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-  @@index([userId], map: "user_idx")
+  @@index([userId])
 }
 
 model Post {
-  id        String    @id @db.VarChar(15)
-  userId    String    @db.VarChar(255)
-  title     String    @db.VarChar(255)
-  excerpt   String    @db.VarChar(255)
+  id        String    @id
+  userId    String    
+  title     String    
+  excerpt   String
   content   String    @db.Text
   status    String    @default("draft") @db.VarChar(10)
-  tags      String?   @db.VarChar(255)
+  tags      String?   
   createdAt DateTime  @default(dbgenerated("(now())")) @db.Timestamp(0)
   updatedAt DateTime? @db.Timestamp(0)
 
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-  @@index([createdAt], map: "post_created_at_idx")
-  @@index([userId], map: "user_idx")
+  @@index([createdAt])
+  @@index([userId])
 }
 
 model emailVerificationCode {
   id        Int      @id @default(autoincrement())
-  userId    String   @unique(map: "email_verification_codes_user_id_unique") @db.VarChar(21)
-  email     String   @db.VarChar(255)
-  code      String   @db.VarChar(8)
-  expiresAt DateTime @db.DateTime(0)
+  userId    String   @unique(map: "email_verification_codes_user_id_unique") 
+  email     String
+  code      String
+  expiresAt DateTime @db.Timestamp(0)
 
   user User @relation(fields: [userId], references: [id])
 
-  @@index([email], map: "email_idx")
-  @@index([userId], map: "user_idx")
+  @@index([email])
+  @@index([userId])
 }
 
 model passwordResetToken {
-  id        String   @id @db.VarChar(40)
-  userId    String   @unique @db.VarChar(21)
-  expiresAt DateTime @db.DateTime(0)
+  id        String   @id
+  userId    String   @unique 
+  expiresAt DateTime @db.Timestamp(0)
 
   user User @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "user_idx")
+  @@index([userId])
 }
