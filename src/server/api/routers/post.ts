@@ -111,11 +111,11 @@ export const postRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
       }),
     ),
-  myPostsCount: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.post.count({
+  myPostsCount: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.post.count({
       where: {
         userId: ctx.user.id,
       },
-    });
-  }),
+    }),
+  ),
 });

@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/trpc/react";
 import { LoadingButton } from "@/components/loading-button";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -34,7 +35,19 @@ export const NewUser = () => {
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
-    createUser.mutate({ ...values }, {});
+    await createUser.mutateAsync(
+      { ...values },
+      {
+        onSuccess: () => {
+          toast.success("User created");
+          router.push("/admin");
+          location.reload();
+        },
+        onError: () => {
+          toast.error("Failed to create user");
+        },
+      },
+    );
     router.push("/admin");
   });
 

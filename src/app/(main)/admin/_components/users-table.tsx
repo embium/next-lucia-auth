@@ -1,6 +1,6 @@
 "use client";
 
-import { type UserRole } from "@prisma/client";
+import { type User } from "@prisma/client";
 
 import {
   type ColumnDef,
@@ -55,16 +55,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/trpc/react";
 
-type User = {
-  id: string;
-  email: string;
-  avatar: string | null;
-  createdAt: Date;
-  updatedAt: Date | null;
-  role: UserRole;
-};
+type UserWithoutPassword = Omit<User, "hashedPassword">;
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<UserWithoutPassword>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -118,6 +111,22 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }): string => row.getValue("email"),
   },
   {
+    accessorKey: "emailVerified",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Verified
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }): string =>
+      row.getValue("emailVerified") ? "True" : "False",
+  },
+  {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
@@ -142,8 +151,12 @@ export const columns: ColumnDef<User>[] = [
   },
 ];
 
-export default function UsersTable({ users }: { users: User[] }) {
-  const [data, setData] = useState<User[]>(users);
+export default function UsersTable({
+  users,
+}: {
+  users: UserWithoutPassword[];
+}) {
+  const [data, setData] = useState<UserWithoutPassword[]>(users);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { protectedProcedure, createTRPCRouter } from "../trpc";
 import { Scrypt, generateId } from "lucia";
+import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
   list: protectedProcedure
@@ -17,6 +18,7 @@ export const userRouter = createTRPCRouter({
         select: {
           id: true,
           email: true,
+          emailVerified: true,
           avatar: true,
           updatedAt: true,
           createdAt: true,
@@ -26,7 +28,17 @@ export const userRouter = createTRPCRouter({
       }),
     ),
   count: protectedProcedure.query(({ ctx }) => ctx.prisma.user.count()),
-  get: protectedProcedure.query(({ ctx }) => ctx.user),
+  get: protectedProcedure
+    .input(z.string().optional())
+    .query(({ ctx, input }) => {
+      return (
+        (input &&
+          ctx.prisma.user.findUnique({
+            where: { id: input },
+          })) ??
+        ctx.user
+      );
+    }),
   create: protectedProcedure
     .input(
       z.object({
@@ -35,13 +47,57 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findUnique({
+        where: { email: input.email },
+      });
+      if (user) {
+        throw new TRPCError({
+          message: "User already exists",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+
       const userId = generateId(21);
       const hashedPassword = await new Scrypt().hash(input.password);
       await ctx.prisma.user.create({
         data: {
           id: userId,
           email: input.email,
-          hashedPassword: input.password,
+          hashedPassword,
+        },
+      });
+    }),
+  edit: protectedProcedure
+    .input(
+      z.object({
+        email: z.string().email("Please enter a valid email"),
+        emailVerified: z.boolean(),
+        password: z.string().max(255).nullish(),
+        avatar: z.string().max(255).nullish(),
+        role: z.enum(["ADMIN", "USER"]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findUnique({
+        where: { email: input.email },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          message: "User doesn't exist",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+      console.log(input.password && (await new Scrypt().hash(input.password)));
+      await ctx.prisma.user.update({
+        where: { email: input.email },
+        data: {
+          email: input.email,
+          emailVerified: input.emailVerified,
+          hashedPassword:
+            input.password && (await new Scrypt().hash(input.password)),
+          avatar: input.avatar,
+          role: input.role,
         },
       });
     }),
