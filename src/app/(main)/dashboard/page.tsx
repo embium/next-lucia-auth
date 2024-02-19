@@ -34,7 +34,7 @@ export default function DashboardPage({ searchParams }: Props) {
    * @see https://www.youtube.com/shorts/A7GGjutZxrs
    * @see https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-data-fetching
    */
-  const defaultLimit = limit ?? 1;
+  const defaultLimit = limit ?? 11;
   const defaultSkip = skip ?? 0;
 
   const posts = api.post.myPosts.useQuery({
