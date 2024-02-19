@@ -21,8 +21,8 @@ interface Props {
 }
 
 const schmea = z.object({
-  skip: z.coerce.number().default(1).optional(),
-  limit: z.coerce.number().default(12).optional(),
+  skip: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
 });
 
 export default function DashboardPage({ searchParams }: Props) {
@@ -34,16 +34,22 @@ export default function DashboardPage({ searchParams }: Props) {
    * @see https://www.youtube.com/shorts/A7GGjutZxrs
    * @see https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-data-fetching
    */
-  const posts = api.post.myPosts.useQuery({ skip, limit });
+  const defaultLimit = limit ?? 1;
+  const defaultSkip = skip ?? 0;
+
+  const posts = api.post.myPosts.useQuery({
+    skip: defaultSkip,
+    limit: defaultLimit,
+  });
   const totalPosts = api.post.myPostsCount.useQuery();
 
   if (posts.isLoading || totalPosts.isLoading) {
     return <p>Loading...</p>;
   }
 
-  const defaultLimit = limit ?? 12;
-  const defaultSkip = skip ?? 0;
-  const totalPages = Math.ceil(Number(totalPosts.data) / defaultLimit);
+  const total = Number(totalPosts.data);
+
+  const totalPages = Math.ceil(total / defaultLimit);
   const currentPage = Math.floor(defaultSkip / defaultLimit) + 1;
   const maxPages = 7;
   const halfMaxPages = Math.floor(maxPages / 2);
@@ -56,10 +62,12 @@ export default function DashboardPage({ searchParams }: Props) {
   } else {
     let startPage = currentPage - halfMaxPages;
     let endPage = currentPage + halfMaxPages;
+
     if (startPage < 1) {
       endPage += Math.abs(startPage) + 1;
       startPage = 1;
     }
+
     if (endPage > totalPages) {
       startPage -= endPage - totalPages;
       endPage = totalPages;
@@ -70,7 +78,7 @@ export default function DashboardPage({ searchParams }: Props) {
   }
 
   const canPageBackwards = defaultSkip > 0;
-  const canPageForwards = defaultSkip + defaultLimit < Number(totalPosts.data);
+  const canPageForwards = defaultSkip + defaultLimit < total;
 
   return (
     <div className="py-10 md:py-8">
