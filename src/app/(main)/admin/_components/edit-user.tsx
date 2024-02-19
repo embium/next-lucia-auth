@@ -34,7 +34,10 @@ interface Props {
 const schema = z.object({
   email: z.string().email("Please enter a valid email"),
   emailVerified: z.boolean(),
-  password: z.string().max(255).nullish(),
+  password:  z
+    .string()
+    .min(8, "Password is too short. Minimum 8 characters required.")
+    .max(255).nullish(),
   role: z.enum(["ADMIN", "USER"]),
   avatar: z.string().max(255).nullish(),
 });
@@ -61,7 +64,7 @@ export const EditUserForm = ({ user }: Props) => {
         onSuccess: () => {
           toast.success("User updated");
           router.push("/admin");
-          location.reload();
+          router.refresh()
         },
         onError: () => {
           toast.error("Failed to update user");

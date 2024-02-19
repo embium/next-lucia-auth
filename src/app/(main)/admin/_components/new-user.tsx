@@ -29,7 +29,10 @@ import { type UserRole } from "@prisma/client";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email"),
-  password: z.string().min(1, "Please provide your password.").max(255),
+  password:  z
+    .string()
+    .min(8, "Password is too short. Minimum 8 characters required.")
+    .max(255),
   avatar: z.string().max(255).nullish(),
   emailVerified: z.boolean(),
   role: z.enum(["ADMIN", "USER"]),
@@ -58,7 +61,7 @@ export const NewUser = () => {
           onSuccess: () => {
             toast.success("User created");
             router.push("/admin");
-            location.reload();
+            router.refresh()
           },
         },
       );

@@ -78,7 +78,9 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().email("Please enter a valid email"),
-        password: z.string().max(255).nullish(),
+        password: z.string()
+          .min(8, "Password is too short. Minimum 8 characters required.")
+          .max(255).nullish(),
         avatar: z.string().max(255).nullish(),
         emailVerified: z.boolean(),
         role: z.enum(["ADMIN", "USER"]),
