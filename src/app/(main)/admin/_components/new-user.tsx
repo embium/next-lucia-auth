@@ -51,19 +51,20 @@ export const NewUser = () => {
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
-    await createUser.mutateAsync(
-      { ...values },
-      {
-        onSuccess: () => {
-          toast.success("User created");
-          router.push("/admin");
-          location.reload();
+    try {
+      await createUser.mutateAsync(
+        { ...values },
+        {
+          onSuccess: () => {
+            toast.success("User created");
+            router.push("/admin");
+            location.reload();
+          },
         },
-        onError: () => {
-          toast.error("Failed to create user");
-        },
-      },
-    );
+      );
+    } catch (err) {
+      toast.error("Failed to create user");
+    }
   });
 
   return (
