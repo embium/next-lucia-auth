@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/trpc/react";
 import { Pencil2Icon } from "@/components/icons";
 import { LoadingButton } from "@/components/loading-button";
+import { toast } from "sonner";
 
 interface Props {
   post: RouterOutputs["post"]["get"];
@@ -47,7 +48,16 @@ export const PostEditor = ({ post }: Props) => {
     resolver: zodResolver(schema),
   });
   const onSubmit = form.handleSubmit(async (values) => {
-    updatePost.mutate({ id: post.id, ...values });
+    updatePost.mutate(
+      { id: post.id, ...values },
+      {
+        onSuccess: () => {
+         toast.success("Post updated successfully")
+       },
+       onError: () => {
+         toast.error("Failed to update post")
+       }
+      }); 
   });
 
   return (
