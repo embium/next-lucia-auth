@@ -5,10 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "db:push": "dotenv drizzle-kit push:mysql",
-    "db:generate": "dotenv drizzle-kit generate:mysql",
-    "db:migrate": "dotenv tsx src/server/db/migrate.ts",
-    "db:studio": "dotenv drizzle-kit studio",
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "start": "next start",
     "lint": "next lint",
