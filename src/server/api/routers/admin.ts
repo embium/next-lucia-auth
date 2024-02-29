@@ -97,7 +97,7 @@ export const adminRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-      console.log(input.password && (await new Scrypt().hash(input.password)));
+
       await ctx.prisma.user.update({
         where: { email: input.email },
         data: {

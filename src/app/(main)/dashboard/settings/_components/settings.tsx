@@ -1,6 +1,7 @@
 "use client";
-import { useRef } from "react";
-import { z } from "zod";
+
+import { useRef, useState } from "react";
+import { set, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -11,21 +12,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Input } from "@/components/ui/input";
 import { api } from "@/trpc/react";
 import { LoadingButton } from "@/components/loading-button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeftIcon, CheckIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { type User, type UserRole } from "@prisma/client";
+import { ArrowLeftIcon } from "lucide-react";
+
+import { type User } from "@prisma/client";
 import Link from "next/link";
 
 const schema = z.object({
@@ -41,11 +36,12 @@ const schema = z.object({
 export const SettingsForm = ({
   user,
 }: {
-  user: Omit<User, "hashedPassword">;
+  user: Omit<User, "hashedPassword" | "role" | "emailVerified">;
 }) => {
   const router = useRouter();
+  const [disabled, setDisabled] = useState(true);
   const formRef = useRef<HTMLFormElement>(null);
-  const updateUser = api.admin.updateUser.useMutation();
+  const updateUser = api.user.edit.useMutation();
   const form = useForm({
     defaultValues: {
       email: user.email,
@@ -63,11 +59,18 @@ export const SettingsForm = ({
           onSuccess: () => {
             toast.success("Settings updated");
             router.refresh();
+            setDisabled(true);
           },
         },
       );
     } catch (err) {
       toast.error("Failed to update settings");
+    }
+  });
+
+  form.watch((data) => {
+    if (!!data) {
+      setDisabled(false);
     }
   });
 
@@ -81,7 +84,7 @@ export const SettingsForm = ({
       </Link>
       <div className="flex items-center gap-2">
         <LoadingButton
-          disabled={!form.formState.isDirty}
+          disabled={!form.formState.isDirty || disabled}
           loading={updateUser.isLoading}
           onClick={() => formRef.current?.requestSubmit()}
           className="ml-auto"

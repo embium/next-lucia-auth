@@ -128,6 +128,9 @@ dependencies:
   rehype-raw:
     specifier: ^7.0.0
     version: 7.0.0
+  rehype-sanitize:
+    specifier: ^6.0.0
+    version: 6.0.0
   remark-gfm:
     specifier: ^4.0.0
     version: 4.0.0
@@ -4140,6 +4143,14 @@ packages:
       zwitch: 2.0.4
     dev: false
 
+  /hast-util-sanitize@5.0.1:
+    resolution: {integrity: sha512-IGrgWLuip4O2nq5CugXy4GI2V8kx4sFVy5Hd4vF7AR2gxS0N9s7nEAVUyeMtZKZvzrxVsHt73XdTsno1tClIkQ==}
+    dependencies:
+      '@types/hast': 3.0.4
+      '@ungap/structured-clone': 1.2.0
+      unist-util-position: 5.0.0
+    dev: false
+
   /hast-util-to-jsx-runtime@2.3.0:
     resolution: {integrity: sha512-H/y0+IWPdsLLS738P8tDnrQ8Z+dj12zQQ6WC11TIM21C8WFVoIxcqWXf2H3hiTVZjF1AWqoimGwrTWecWrnmRQ==}
     dependencies:
@@ -5720,6 +5731,13 @@ packages:
       '@types/hast': 3.0.4
       hast-util-raw: 9.0.2
       vfile: 6.0.1
+    dev: false
+
+  /rehype-sanitize@6.0.0:
+    resolution: {integrity: sha512-CsnhKNsyI8Tub6L4sm5ZFsme4puGfc6pYylvXo1AeqaGbjOYyzNv3qZPwvs0oMJ39eryyeOdmxwUIo94IpEhqg==}
+    dependencies:
+      '@types/hast': 3.0.4
+      hast-util-sanitize: 5.0.1
     dev: false
 
   /remark-gfm@4.0.0:

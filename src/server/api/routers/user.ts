@@ -50,8 +50,9 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
+      const user = await ctx.prisma.user.findFirst({
         where: { email: input.email },
+        select: { email: true },
       });
 
       if (user) {
@@ -78,12 +79,12 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().email("Please enter a valid email"),
-        password: z.string()
+        password: z
+          .string()
           .min(8, "Password is too short. Minimum 8 characters required.")
-          .max(255).nullish(),
+          .max(255)
+          .nullish(),
         avatar: z.string().max(255).nullish(),
-        emailVerified: z.boolean(),
-        role: z.enum(["ADMIN", "USER"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -97,16 +98,17 @@ export const userRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-      console.log(input.password && (await new Scrypt().hash(input.password)));
+
+      if (user?.email !== ctx.user.email) {
+      }
+
       await ctx.prisma.user.update({
         where: { email: input.email },
         data: {
           email: input.email,
-          emailVerified: input.emailVerified,
           hashedPassword:
             input.password && (await new Scrypt().hash(input.password)),
           avatar: input.avatar,
-          role: input.role,
         },
       });
     }),
