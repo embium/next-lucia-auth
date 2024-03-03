@@ -80,7 +80,7 @@ export default async function DashboardPage({ searchParams }: Props) {
         <p className="text-sm text-muted-foreground">Manage your posts here</p>
       </div>
       <Posts posts={posts} />
-      <Pagination>
+      <Pagination className="mt-6">
         <PaginationContent>
           {canPageBackwards && (
             <PaginationItem>

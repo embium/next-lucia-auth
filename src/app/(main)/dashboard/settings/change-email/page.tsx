@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
-import SettingsTable from "./_components/settings";
+import { ChangeEmailForm } from "./_components/form";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -18,5 +18,5 @@ export default async function SettingsPage() {
     redirect("/signin");
   }
 
-  return <SettingsTable user={user} />;
+  return <ChangeEmailForm user={user} />;
 }

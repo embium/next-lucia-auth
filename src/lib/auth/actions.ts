@@ -338,7 +338,7 @@ const timeFromNow = (time: Date) => {
   return `${minutes}m ${seconds}s`;
 };
 
-async function generateEmailVerificationCode(
+export async function generateEmailVerificationCode(
   userId: string,
   email: string,
 ): Promise<string> {

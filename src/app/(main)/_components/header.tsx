@@ -12,7 +12,7 @@ export const Header = ({ user }: { user: User }) => {
           className="flex items-center justify-center text-xl font-medium"
           href="/"
         >
-          <RocketIcon className="mr-2 h-5 w-5" /> {APP_TITLE} Dashboard
+          <RocketIcon className="mr-2 h-5 w-5" /> {APP_TITLE}
         </Link>
 
         <UserDropdown

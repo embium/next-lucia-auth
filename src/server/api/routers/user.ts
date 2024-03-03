@@ -2,6 +2,9 @@ import { z } from "zod";
 import { protectedProcedure, createTRPCRouter } from "../trpc";
 import { Scrypt, generateId } from "lucia";
 import { TRPCError } from "@trpc/server";
+import { generateEmailVerificationCode } from "@/lib/auth/actions";
+import { sendEmail } from "@/server/send-mail";
+import { renderVerificationCodeEmail } from "@/lib/email-templates/email-verification";
 
 export const userRouter = createTRPCRouter({
   list: protectedProcedure
@@ -82,14 +85,14 @@ export const userRouter = createTRPCRouter({
         password: z
           .string()
           .min(8, "Password is too short. Minimum 8 characters required.")
-          .max(255)
-          .nullish(),
+          .max(255),
         avatar: z.string().max(255).nullish(),
       }),
     )
+    .output(z.object({ message: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findUnique({
-        where: { email: input.email },
+        where: { email: ctx.user.email },
       });
 
       if (!user) {
@@ -99,16 +102,134 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      if (user?.email !== ctx.user.email) {
+      if (input.email !== ctx.user.email) {
+        const verificationCode = await generateEmailVerificationCode(
+          user.id,
+          input.email,
+        );
+
+        await sendEmail({
+          to: input.email,
+          subject: "Verify your account",
+          html: renderVerificationCodeEmail({ code: verificationCode }),
+        });
+
+        await ctx.prisma.user.update({
+          where: { email: user.email },
+          data: {
+            email: input.email,
+            hashedPassword:
+              input.password && (await new Scrypt().hash(input.password)),
+            avatar: input.avatar,
+            emailVerified: false,
+          },
+        });
+
+        return { message: "Email verification sent" };
       }
 
       await ctx.prisma.user.update({
-        where: { email: input.email },
+        where: { email: user.email },
         data: {
           email: input.email,
           hashedPassword:
             input.password && (await new Scrypt().hash(input.password)),
           avatar: input.avatar,
+        },
+      });
+
+      return { message: "User updated" };
+    }),
+  changeEmail: protectedProcedure
+    .input(
+      z.object({
+        email: z.string().email("Please enter a valid email"),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findUnique({
+        where: { email: ctx.user.email },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          message: "User doesn't exist",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+
+      if (input.email !== ctx.user.email) {
+        const verificationCode = await generateEmailVerificationCode(
+          user.id,
+          input.email,
+        );
+
+        await sendEmail({
+          to: input.email,
+          subject: "Verify your account",
+          html: renderVerificationCodeEmail({ code: verificationCode }),
+        });
+
+        await ctx.prisma.user.update({
+          where: { email: user.email },
+          data: {
+            email: input.email,
+            emailVerified: false,
+          },
+        });
+
+        return { message: "Email verification sent" };
+      }
+
+      return { message: "Email unchanged" };
+    }),
+  changePassword: protectedProcedure
+    .input(
+      z.object({
+        currentPassword: z.string().min(8).max(255),
+        newPassword: z
+          .string()
+          .min(8, "Password is too short. Minimum 8 characters required.")
+          .max(255),
+        confirmNewPassword: z.string().min(8).max(255),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findUnique({
+        where: { email: ctx.user.email },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          message: "User doesn't exist",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+
+      if (input.newPassword !== input.confirmNewPassword) {
+        throw new TRPCError({
+          message: "Passwords do not match",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+
+      const validPassword = await new Scrypt().verify(
+        user.hashedPassword,
+        input.currentPassword,
+      );
+
+      if (!validPassword) {
+        throw new TRPCError({
+          message: "Incorrect password",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+
+      const hashedPassword = await new Scrypt().hash(input.newPassword);
+      await ctx.prisma.user.update({
+        where: { email: user.email },
+        data: {
+          hashedPassword,
         },
       });
     }),

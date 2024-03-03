@@ -68,7 +68,7 @@ export default async function Users({ searchParams }: Props) {
   return (
     <>
       <PostsTable posts={posts} />
-      <Pagination>
+      <Pagination className="mt-6">
         <PaginationContent>
           {canPageBackwards && (
             <PaginationItem>
